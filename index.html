@@ -1,0 +1,218 @@
+<!DOCTYPE HTML>
+<html lang="en">
+<head>
+	<title>Vis & Society Assignment 2</title>
+	<link rel="stylesheet" href="https://vis-society.github.io/assignments/report.css" />
+	<link rel="stylesheet" type="text/css" href="styles.css" /> 
+	<script>
+		function magnify(imgID, zoom) {
+			var img, glass, w, h, bw;
+			img = document.getElementById(imgID);
+
+			/* Create magnifier glass: */
+			glass = document.createElement("DIV");
+			glass.setAttribute("class", imgID);
+
+			/* Insert magnifier glass: */
+			img.parentElement.insertBefore(glass, img);
+
+			/* Set background properties for the magnifier glass: */
+			glass.style.backgroundImage = "url('" + img.src + "')";
+			glass.style.backgroundRepeat = "no-repeat";
+			glass.style.backgroundSize = (img.width * zoom) + "px " + (img.height * zoom) + "px";
+			bw = 3;
+			w = glass.offsetWidth / 2;
+			h = glass.offsetHeight / 2;
+
+			/* Execute a function when someone moves the magnifier glass over the image: */
+			glass.addEventListener("mousemove", moveMagnifier);
+			img.addEventListener("mousemove", moveMagnifier);
+
+			/*and also for touch screens:*/
+			glass.addEventListener("touchmove", moveMagnifier);
+			img.addEventListener("touchmove", moveMagnifier);
+			function moveMagnifier(e) {
+				var pos, x, y;
+				/* Prevent any other actions that may occur when moving over the image */
+				e.preventDefault();
+				
+				const element = document.querySelector("."+imgID);
+    			element.style.width = '100px';
+				element.style.height = '100px';
+
+				/* Get the cursor's x and y positions: */
+				pos = getCursorPos(e);
+				x = pos.x;
+				y = pos.y;
+				/* Prevent the magnifier glass from being positioned outside the image: */
+				if (x > img.width - (w / zoom)) {x = img.width - (w / zoom);}
+				if (x < w / zoom) {x = w / zoom;}
+				if (y > img.height - (h / zoom)) {y = img.height - (h / zoom);}
+				if (y < h / zoom) {y = h / zoom;}
+				/* Set the position of the magnifier glass: */
+				glass.style.left = (x - w) + "px";
+				glass.style.top = (y - h) + "px";
+				/* Display what the magnifier glass "sees": */
+				glass.style.backgroundPosition = "-" + ((x * zoom) - w + bw) + "px -" + ((y * zoom) - h + bw) + "px";
+
+
+			}
+
+			function getCursorPos(e) {
+				var a, x = 0, y = 0;
+				e = e || window.event;
+				/* Get the x and y positions of the image: */
+				a = img.getBoundingClientRect();
+				/* Calculate the cursor's x and y coordinates, relative to the image: */
+				x = e.pageX - a.left;
+				y = e.pageY - a.top;
+				/* Consider any page scrolling: */
+				x = x - window.pageXOffset;
+				y = y - window.pageYOffset;
+				return {x : x, y : y};
+			}
+			}
+	</script>
+</head>
+
+<body>
+	<header>
+		<h1>
+			<small>Assignment 2</small>
+			Exploratory Data Analysis
+		</h1>
+
+		<p>
+			<strong>Jake Jones</strong> — <em>jmpjones@mit.edu</em>
+		</p>
+	</header>
+	<main>
+		<section>
+			<h2>Subtheme: Exclusionary Zoning</h2>
+
+			<h3>Overall Analysis Questions</h3>
+			<ol>
+				<li>How does geography explain which areas are zoned for single families?</li>
+				<li>How is Boston different from the surrounding Metro area?</li>
+				<li>How does income intersect with race and single family zoning?</li>
+			</ol>
+		</section>
+
+		<section>
+			<h2>Discoveries & Insights</h2>
+
+			Pro Tip: Mouse over each image to zoom in!
+
+			<figure  class="img-magnifier-container" style="position: relative; display: flex; flex-direction: column; justify-content: center; align-items: center; overflow: auto">
+				<img id="Sheet-1" src="Sheet 1.png" alt="" style="flex-shrink: 0; max-width: 100%;"/>
+				<figcaption>
+					This chart lays out the distribution of different municipalities in the Metro Boston area. It split each town into the people who live in single family zoning, and those who do not live in single family zoning. Then, I created charts for the population of each race, to view trends between single family population and race. Boston is incredibly large relative to other towns, so I took the liberty of magnifying the scaling to better see other towns. From this chart, a few areas of further exploration are readily apparent. The first is Boston’s outsize impact on the population— how does it compare to the statewide population in terms of race and income distribution? The second concerns race itself: among larger cities, it seems that White people live in single family zoning at higher rates than African American and Latino people. Is there a geographic connection here?
+				</figcaption>
+			</figure>
+
+			<figure class="img-magnifier-container" style="display: flex; flex-direction: column; justify-content: center; align-items: center; overflow: auto">
+				<img id="Sheet-2" src="Sheet 2.png" alt="" style="flex-shrink: 0; max-width: 100%; max-height: 100%;"/>
+				<figcaption>
+					Next I divided the data up by population and gender. I wanted to again look on a municipality by municipality level, because that is how the data is structured inherently. Boston is once again overwhelming, but the remainder of the data is satisfactory. There were a few nulls that had to be excluded, but overall it is distributed well between both genders and age. One interesting question to consider is the distribution of the largest cities geographically. Cambridge, Quincy, Lynn, and Newton all have different levels of single family zoning, so I wonder if they are far away from each other, and if so, what that says about the development of this policy.
+				</figcaption>
+			</figure>
+
+			<figure class="img-magnifier-container" style="display: flex; flex-direction: column; justify-content: center; align-items: center; overflow: auto">
+				<img id="Sheet-3" src="Sheet 3.png" alt="" style="flex-shrink: 0; max-width: 100%; max-height: 100%;"/>
+				<figcaption>
+					Here, we examine municipalities for the final time, but now we look at income. Since a big factor in the New York Times article, “Cities Start to Question an American Ideal: A House With a Yard on Every Lot” was the relationship between single family zoning, housing prices, and income/wealth, I wanted to do a preliminary scan to see any strange correlations there. I chose to sort the municipalities by largest low income population, which I defined as between 0 and 60,000 dollars annual income. I did this to better explore which towns had a higher low income population but low wealthy population, and vice versa. One of the biggest examples that popped out again was Newton and Brookline, which had tremendous wealthy populations compared to their low and middle income populations. Cities like Cambridge had a good mix of all three, while cities like Lynn and Quincy were lacking.
+				</figcaption>
+			</figure>
+
+			<figure class="img-magnifier-container" style="display: flex; flex-direction: column; justify-content: center; align-items: center; overflow: auto">
+				<img id="Sheet-4" src="Sheet 4.png" alt="" style="flex-shrink: 0; max-width: 100%; max-height: 100%;"/>
+				<figcaption>
+					One important dimension of the data to cover was geography. We decided to color the towns on the map based on their single family zoning percent as compared to the overall population, and display that percent under the town names. From this we can see a relationship between geography and single family zoning— the policy is predominantly used in the towns to the west and north-west of Boston. Some of these towns (Newton, Brookline) were also wealthy towns, while towns like Lynn and Quincy are to the north and south of Boston, respectively, and have smaller SFPs (Single Family Populations). This confirms my initial question, but leads to me to want to follow up by looking at race and income from a geographical standpoint. 
+				</figcaption>
+			</figure>
+
+			<figure class="img-magnifier-container" style="display: flex; flex-direction: column; justify-content: center; align-items: center; overflow: auto">
+				<img id="Sheet-10" src="Sheet 10.png" alt="" style="flex-shrink: 0; max-width: 100%; max-height: 100%;"/>
+				<figcaption>
+					First though, we will explore one more dimension of the data. I hadn’t dealt much with the household size data, so I decided to double check my intuition. Removing Null values, I took a look at the average size of both family and non-family homes for each municipality in Boston. As expected, the non-family homes are on average about 2 people smaller than family homes. Non-family homes include lots of couples or singles living alone, and I would therefore expect them to be smaller. The data is also fairly consistent across municipality, with the exception of Chelsea for family homes and Somerville for non-family homes. 
+				</figcaption>
+			</figure>
+
+			<figure class="img-magnifier-container" style="display: flex; flex-direction: column; justify-content: center; align-items: center; overflow: auto">
+				<img id="Sheet-5" src="Sheet 5.png" alt="" style="flex-shrink: 0; max-width: 100%; max-height: 100%;"/>
+				<figcaption>
+					Now, we can get to looking at how geography affects single family zoning. When we plot these towns and color them with their high income (>125k) populations, a similar pattern appears to the single family zoning map: high incomes are concentrated to the west and north-west of the city of Boston. While this may imply a correlation, it does not imply causation. Did rich people go to areas with lots of single family zoning, or did living in single family zoning make these people rich? This is relevant because it is a central argument made in favor of single family zoning in the NYT article: SFZ is important because it keeps housing prices high, which enriches the families who live in those areas.
+				</figcaption>
+			</figure>
+
+			<figure class="img-magnifier-container" style="display: flex; flex-direction: column; justify-content: center; align-items: center; overflow: auto">
+				<img id="Sheet-6" src="Sheet 6.png" alt="" style="flex-shrink: 0; max-width: 100%; max-height: 100%;"/>
+				<figcaption>
+					Now, we go to explore how race is related to single family zoning. We get a little bit less information from this graph, purely because the vast majority of the geographical area outside of Boston is predominantly white. This makes it harder to determine distinctions between different areas, but it does lead back to a question I want to explore later— Boston is again different from much of the surrounding area. How different really is it?
+				</figcaption>
+			</figure>
+
+			<figure class="img-magnifier-container" style="display: flex; flex-direction: column; justify-content: center; align-items: center; overflow: auto">
+				<img id="Sheet-7" src="Sheet 7.png" alt="" style="flex-shrink: 0; max-width: 100%; max-height: 100%;"/>
+				<figcaption>
+					Finally, we look at another piece of information that correlates with the predominately SFZ and high-income population to the west of Boston. The Boston MBTA rail system runs significantly deeper to the west than it does to the north. The rail line running west, the Green line, is also the oldest line in Boston. Was the line built for the wealthy people who already lived out there, or was the line a way for people with the means to move out of the city to do so? Either way, the age and expansion of public transit seems to be correlated with this population to the west of the city, and may partially explain how different areas came to be more wealthy, and with that wealth, to protect their areas with single family zoning.
+				</figcaption>
+			</figure>
+
+			<figure class="img-magnifier-container" style="display: flex; flex-direction: column; justify-content: center; align-items: center; overflow: auto">
+				<img id="Sheet-8" src="Sheet 8.png" alt="" style="flex-shrink: 0; max-width: 100%; max-height: 100%;"/>
+				<figcaption>
+					I thought this might be the case, and given my personal experience, I wanted to explore this question. I live in a commuter suburb of New York City, and the city itself is very different from my small hometown, in much the same way some of these towns in the Boston metro area are very different from the city itself. I was interested to see just how different they are, now that I’ve got access to this data. Racially, as expected, the towns surrounding Boston are much less diverse. Boston is nearly 30% less white than the area around it, and has large African American and Latino populations. Filtering out Null values, we see that the Asian populations are largely the same. 
+				</figcaption>
+			</figure>
+
+			<figure class="img-magnifier-container" style="display: flex; flex-direction: column; justify-content: center; align-items: center; overflow: auto">
+				<img id="Sheet-9" src="Sheet 9.png" alt="" style="flex-shrink: 0; max-width: 100%; max-height: 100%;"/>
+				<figcaption>
+					Going beyond race, we can look at income. Both Boston and remaining metro areas have approximately the same percentage of people in the “middle class” with income between 60 and 125k. Note: my use of income brackets is pretty trivial, since I am not actually an economist. However, Boston has nearly 15% more people of low income, while the suburbs have much more wealthy people. Here, we can see a correlation between more wealth and more whiteness in the suburbs, as well as more single family zoning (since Boston has zero). This does support the NYT argument that single family zoning does typically demonstrate differences between racial and economic groups. 
+				</figcaption>
+			</figure>
+
+			<figure class="img-magnifier-container" style="display: flex; flex-direction: column; justify-content: center; align-items: center; overflow: auto">
+				<img id="Sheet-11" src="Sheet 11.png" alt="" style="flex-shrink: 0; max-width: 100%; max-height: 100%;"/>
+				<figcaption>
+					Once we saw the difference between Boston and the surrounding metro area, it became important to look more closely at the relationship between income and single family zoning. I plotted each municipality by their single family percent and their average income. There is little correlation in the trendline, mainly because there are so many towns with either 0 or 100% single family zoning. However, one important point to note is that while towns with no SFZ are pretty well distributed between 60 and 160 thousand dollars of income, towns with 100% SFZ are almost entirely above 130 thousand dollars, implying that towns with a lot of single family zoning are almost always very wealthy. 
+				</figcaption>
+			</figure>
+
+			<figure class="img-magnifier-container" style="display: flex; flex-direction: column; justify-content: center; align-items: center; overflow: auto">
+				<img id="Sheet-12" src="Sheet 12.png" alt="" style="flex-shrink: 0; max-width: 100%; max-height: 100%;"/>
+				<figcaption>
+					Lastly, we looked at the relationship between race and income. I took the percent of the town that is part of a traditionally underrepresented minority group (African American, Latino, Native American, Pacific Islander) and plotted it against that town’s average income. I found a fairly clear logarithmic relationship, as can be seen from the chart. Less income was more associated with more members of underrepresented minority groups, while mostly white towns had a wide variety of average incomes. 
+				</figcaption>
+			</figure>
+
+		</section>
+
+		<script>
+			/* Execute the magnify function: */
+			magnify("Sheet-1", 1.5);
+			magnify("Sheet-2", 1.5);
+			magnify("Sheet-3", 1.5);
+			magnify("Sheet-4", 1.5);
+			magnify("Sheet-5", 1.5);
+			magnify("Sheet-6", 1.5);
+			magnify("Sheet-7", 1.5);
+			magnify("Sheet-8", 1.5);
+			magnify("Sheet-9", 1.5);
+			magnify("Sheet-10", 1.5);
+			magnify("Sheet-11", 1.5);
+			magnify("Sheet-12", 1.5);
+			/* Specify the id of the image, and the strength of the magnifier glass: */
+		</script>
+
+		<section>
+			<h2>Summary</h2>
+
+			<p>In this EDA assignment, we took a look at how different municipalities, and their single family zoning rules, are related to race, income, and home size. I began by looking at broad swathes of the data, to understand that some field do have Null values, Boston is so large as to make looking at other data difficult, and family homes are (as expected) about 2 people larger than similar non-family homes. 
+
+				Then I had the opportunity to explore the dataset in more depth. I began by trying to place some of these trends in a geographical context, and established that public transit, income, and single family zoning seem to be correlated with each other. We then looked at Boston versus the surrounding metro area, and saw that Boston is both less wealthy and less white than the other towns. Finally, we explore the relationship between income, single family zoning percentage, and race. We saw a robust negative relationship between income and underrepresented minority percentage, and a slight positive relationship between single family zone percentage and income.</p>
+		</section>
+	</main>
+</body>
+</html>
